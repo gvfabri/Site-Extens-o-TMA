@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Qualidade do Ar</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Times-New-Roman, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #13219e 90%);
+            min-height: 100vh;
+            color: #333;
+            line-height: 1.5;
+        }
+        
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .header {
+            margin-bottom: 40px;
+            color: white;
+            text-align: center;
+
+        }
+        
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+        
+        .card {
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .pesquisa {
+            text-align: center;
+        }
+        
+        .pesquisaCont {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+        
+        input {
+            padding: 15px 20px;
+            font-size: 18px;
+            border: 2px solid #e0e0e0;
+            border-radius: 30px;
+            width: 300px;
+            outline: none;
+            transition: all 0.3s ease;
+            background: white;
+        }
+        
+        input:focus {
+
+            box-shadow: 0 0 20px rgba(102, 126, 234, 0.2);
+            transform: translateY(-2px);
+        }
+        
+        button {
+            padding: 15px 30px;
+            font-size: 16px;
+            background: linear-gradient(45deg, #667eea, #624ba2);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            min-width: 120px;
+        }
+        
+        button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+        }
+        
+        button:active {
+            transform: translateY(-1px);
+        }
+        
+        #resultado {
+            margin-top: 20px;
+            text-align: left;
+        }
+        
+        .carregando {
+            color: rgb(77, 75, 75);
+            font-size: 18px;
+            padding: 20px;
+            text-align: center;
+
+        }
+        
+        .error {
+            color: #e74c3c;
+            text-align: center;
+            font-size: 18px;
+            padding: 20px;
+            background: rgba(231, 76, 60, 0.1);
+            border-radius: 10px;
+            border-left: 4px solid #e74c3c;
+        }
+        
+        .success {
+            color: #27ae60;
+            margin-bottom: 20px;
+        }
+        
+        .success h3 {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+        }
+        
+        .indicadores-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .indicador {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            border-left: 5px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .indicador:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+        
+        .indicador::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+        }
+        
+        .indicador strong {
+            color: #2c3e50;
+            font-size: 1.1rem;
+        }
+        
+        .mapa {
+            text-align: center;
+        }
+        
+        .mapa h2 {
+            font-size: 2rem;
+            margin-bottom: 20px;
+            color: #2c3e50;
+            position: relative;
+        }
+        
+        .mapa h2::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 3px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            border-radius: 2px;
+        }
+        
+        .descricao{
+            font-size: 1.1rem;
+            color: #555;
+            margin-bottom: 30px;
+            line-height: 1.7;
+        }
+        
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+        
+        .cards {
+            background: linear-gradient(135deg, #1012f8, #764ba2);
+            color: white;
+            padding: 25px;
+            border-radius: 15px;
+            text-align: center;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .cards:hover {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 15px 40px rgba(102, 126, 234, 0.3);
+        }
+        
+        .cards::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            transition: all 0.3s ease;
+            opacity: 0;
+        }
+        
+        .cards:hover::before {
+            opacity: 1;
+            animation: shimmer 1.5s ease-in-out;
+        }
+        
+        @keyframes shimmer {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .icone {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            display: block;
+        }
+        
+        .titulo {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        
+        .descri {
+            font-size: 0.95rem;
+            opacity: 0.9;
+        }
+        
+        .containerMapa {
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            margin-top: 20px;
+        }
+        
+        .containerMapa iframe {
+            width: 100%;
+            height: 500px;
+            border: none;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .pesquisaCont {
+                flex-direction: column;
+            }
+            
+            input {
+                width: 100%;
+                max-width: 350px;
+            }
+            
+            .indicadores-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .features-grid {
+                grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            }
+            
+            .containerMapa iframe {
+                height: 400px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🌍 Projeto de Extensão</h1>
+            <p>Monitoramento da qualidade de ar e Mapa sustentável</p>
+        </div>
+        
+        <div class="card pesquisa">
+            <h2>🔍 Consulte a Qualidade do Ar</h2>
+            <p>Digite o nome de uma cidade para saber informações sobre a qualidade do ar</p>
+            
+            <div class="pesquisaCont">
+                <input type="text" id="cidadeIn" placeholder="Digite o nome da cidade" value="São José dos Campos">
+                <button onclick="consultarAr()">Consultar</button>
+            </div>
+            
+            <div id="resultado"></div>
+        </div>
+        
+        <div class="card mapa">
+            <h2>🗺️ Mapa Interativo Sustentável de São José dos Campos</h2>
+            
+            <p class="description">
+                Explore os principais pontos com iniciativas sustentáveis em São José dos Campos. 
+                Descubra locais que fazem a diferença para o meio ambiente e a comunidade.
+            </p>
+            
+            <div class="features-grid">
+                <div class="cards">
+                    <span class="icone">♻️</span>
+                    <div class="titulo">PEVs</div>
+                    <div class="descri">Pontos de Entrega Voluntária</div>
+                </div>
+                
+                <div class="cards">
+                    <span class="icone">🤝</span>
+                    <div class="titulo">ONGs</div>
+                    <div class="descri">Organizações engajadas em projetos ambientais</div>
+                </div>
+                
+                <div class="cards">
+                    <span class="icone">💧</span>
+                    <div class="titulo">Nascentes</div>
+                    <div class="descri">Programas de revitalização de nascente</div>
+                </div>
+                
+                <div class="cards">
+                    <span class="icone">🌳</span>
+                    <div class="titulo">Áreas Verdes</div>
+                    <div class="descri">Parques, APAs e hortas comunitárias</div>
+                </div>
+            </div>
+            
+            <div class="containerMapa">
+                <iframe src="https://www.google.com/maps/d/u/0/embed?mid=1ky-mjxdIfZSzBHgvZjMqcYM0YcB7uKI&ehbc=2E312F"></iframe>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        async function consultarAr() {
+            const cidadeIn = document.getElementById("cidadeIn");
+            const resultado = document.getElementById("resultado");
+            const cidade = cidadeIn.value.trim();
+            
+            if (!cidade) {
+                resultado.innerHTML = '<div class="error">Por favor, digite uma cidade.</div>';
+                return;
+            }
+            
+            resultado.innerHTML = '<div class="carregando">🔍 Buscando dados...</div>';
+            
+            try {
+                const resposta = await fetch(
+                    `https://api.api-ninjas.com/v1/airquality?city=${encodeURIComponent(cidade)}`,
+                    {
+                        headers: {
+                            "X-Api-Key": "44x2oaAE76T5pkGB8xTYcw==TrO0XrSB1fVKolXk"
+                        }
+                    }
+                );
+                
+                if (resposta.status === 200) {
+                    const dados = await resposta.json();
+                    
+                    if (Object.keys(dados).length === 0) {
+                        resultado.innerHTML = '<div class="error">❌ Nenhum dado encontrado para esta cidade.</div>';
+                        return;
+                    }
+                    
+                    resultado.innerHTML = `
+                        <div class="success">
+                            <h3> Qualidade do ar em <strong>${cidade}</strong></h3>
+                        </div>
+                        <div class="indicadores-grid">
+                            <div class="indicador">
+                                <strong>📊 Índice Geral (AQI):</strong><br>
+                                ${dados.overall_aqi || 'N/A'}
+                            </div>
+                            <div class="indicador">
+                                <strong>PM2.5:</strong><br>
+                                ${dados["PM2.5"] || 'N/A'} μg/m³
+                            </div>
+                            <div class="indicador">
+                                <strong>PM10:</strong><br>
+                                ${dados["PM10"] || 'N/A'} μg/m³
+                            </div>
+                            <div class="indicador">
+                                <strong>NO2:</strong><br>
+                                ${dados["NO2"] || 'N/A'} μg/m³
+                            </div>
+                            <div class="indicador">
+                                <strong>CO:</strong><br>
+                                ${dados["CO"] || 'N/A'} μg/m³
+                            </div>
+                            <div class="indicador">
+                                <strong>SO2:</strong><br>
+                                ${dados["SO2"] || 'N/A'} μg/m³
+                            </div>
+                        </div>
+                    `;
+                } else if (resposta.status === 404) {
+                    resultado.innerHTML = '<div class="error"> Erro </div>';
+                } else {
+                    resultado.innerHTML = `<div class="error"> Erro (${resposta.status}).</div>`;
+                }
+                
+            } catch (erro) {
+                resultado.innerHTML = '<div class="error"> Erro ao acessar a API.</div>';
+                console.error('Erro:', erro);
+            }
+        }
+        
+        document.getElementById("cidadeIn").addEventListener("keypress", function(event) {
+            if (event.key === "Enter") {
+                consultarAr();
+            }
+        });
+        
+        window.addEventListener('load', consultarAr);
+    </script>
+</body>
+</html>
