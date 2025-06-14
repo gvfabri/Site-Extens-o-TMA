@@ -13,7 +13,7 @@
         
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Times-New-Roman, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #13219e 90%);
+            background: linear-gradient(135deg, #3a1a92 0%, #3c23ad 90%);
             min-height: 100vh;
             color: #333;
             line-height: 1.5;
@@ -86,7 +86,7 @@
         button {
             padding: 15px 30px;
             font-size: 16px;
-            background: linear-gradient(45deg, #667eea, #624ba2);
+            background: linear-gradient(45deg, #188d28, #136e07);
             color: white;
             border: none;
             border-radius: 50px;
@@ -212,7 +212,7 @@
         }
         
         .cards {
-            background: linear-gradient(135deg, #1012f8, #764ba2);
+            background: linear-gradient(135deg, #2f6ae7, #1b049e);
             color: white;
             padding: 25px;
             border-radius: 15px;
@@ -318,18 +318,6 @@
             <p>Monitoramento da qualidade de ar e Mapa sustentável</p>
         </div>
         
-        <div class="card pesquisa">
-            <h2>🔍 Consulte a Qualidade do Ar</h2>
-            <p>Digite o nome de uma cidade para saber informações sobre a qualidade do ar</p>
-            
-            <div class="pesquisaCont">
-                <input type="text" id="cidadeIn" placeholder="Digite o nome da cidade" value="São José dos Campos">
-                <button onclick="consultarAr()">Consultar</button>
-            </div>
-            
-            <div id="resultado"></div>
-        </div>
-        
         <div class="card mapa">
             <h2>🗺️ Mapa Interativo Sustentável de São José dos Campos</h2>
             
@@ -368,89 +356,200 @@
                 <iframe src="https://www.google.com/maps/d/u/0/embed?mid=1ky-mjxdIfZSzBHgvZjMqcYM0YcB7uKI&ehbc=2E312F"></iframe>
             </div>
         </div>
+        <div class="card pesquisa">
+            <h2>🔍 Consulte a Qualidade do Ar</h2>
+            <p>Digite o nome de uma cidade para saber informações sobre a qualidade do ar</p>
+            
+            <div class="pesquisaCont">
+                <input type="text" id="cidadeIn" placeholder="Digite o nome da cidade" value="São José dos Campos">
+                <button onclick="consultarAr()">Consultar</button>
+            </div>
+            
+            <div id="resultado"></div>
+        </div>
     </div>
 
     <script>
-        async function consultarAr() {
-            const cidadeIn = document.getElementById("cidadeIn");
-            const resultado = document.getElementById("resultado");
-            const cidade = cidadeIn.value.trim();
-            
-            if (!cidade) {
-                resultado.innerHTML = '<div class="error">Por favor, digite uma cidade.</div>';
-                return;
-            }
-            
-            resultado.innerHTML = '<div class="carregando">🔍 Buscando dados...</div>';
-            
-            try {
-                const resposta = await fetch(
-                    `https://api.api-ninjas.com/v1/airquality?city=${encodeURIComponent(cidade)}`,
-                    {
-                        headers: {
-                            "X-Api-Key": "44x2oaAE76T5pkGB8xTYcw==TrO0XrSB1fVKolXk"
-                        }
-                    }
-                );
-                
-                if (resposta.status === 200) {
-                    const dados = await resposta.json();
-                    
-                    if (Object.keys(dados).length === 0) {
-                        resultado.innerHTML = '<div class="error">❌ Nenhum dado encontrado para esta cidade.</div>';
-                        return;
-                    }
-                    
-                    resultado.innerHTML = `
-                        <div class="success">
-                            <h3> Qualidade do ar em <strong>${cidade}</strong></h3>
-                        </div>
-                        <div class="indicadores-grid">
-                            <div class="indicador">
-                                <strong>📊 Índice Geral (AQI):</strong><br>
-                                ${dados.overall_aqi || 'N/A'}
-                            </div>
-                            <div class="indicador">
-                                <strong>PM2.5:</strong><br>
-                                ${dados["PM2.5"] || 'N/A'} μg/m³
-                            </div>
-                            <div class="indicador">
-                                <strong>PM10:</strong><br>
-                                ${dados["PM10"] || 'N/A'} μg/m³
-                            </div>
-                            <div class="indicador">
-                                <strong>NO2:</strong><br>
-                                ${dados["NO2"] || 'N/A'} μg/m³
-                            </div>
-                            <div class="indicador">
-                                <strong>CO:</strong><br>
-                                ${dados["CO"] || 'N/A'} μg/m³
-                            </div>
-                            <div class="indicador">
-                                <strong>SO2:</strong><br>
-                                ${dados["SO2"] || 'N/A'} μg/m³
-                            </div>
-                        </div>
-                    `;
-                } else if (resposta.status === 404) {
-                    resultado.innerHTML = '<div class="error"> Erro </div>';
-                } else {
-                    resultado.innerHTML = `<div class="error"> Erro (${resposta.status}).</div>`;
-                }
-                
-            } catch (erro) {
-                resultado.innerHTML = '<div class="error"> Erro ao acessar a API.</div>';
-                console.error('Erro:', erro);
-            }
+    async function consultarAr() {
+        const cidadeIn = document.getElementById("cidadeIn");
+        const resultado = document.getElementById("resultado");
+        const cidade = cidadeIn.value.trim();
+        
+        if (!cidade) {
+            resultado.innerHTML = '<div class="error">Por favor, digite uma cidade.</div>';
+            return;
         }
         
-        document.getElementById("cidadeIn").addEventListener("keypress", function(event) {
-            if (event.key === "Enter") {
-                consultarAr();
-            }
-        });
+        resultado.innerHTML = '<div class="carregando">🔍 Buscando dados...</div>';
         
-        window.addEventListener('load', consultarAr);
-    </script>
+        try {
+            const resposta = await fetch(
+                `https://api.api-ninjas.com/v1/airquality?city=${encodeURIComponent(cidade)}`,
+                {
+                    headers: {
+                        "X-Api-Key": "44x2oaAE76T5pkGB8xTYcw==TrO0XrSB1fVKolXk"
+                    }
+                }
+            );
+            
+            if (resposta.status === 200) {
+                const dados = await resposta.json();
+                
+                if (Object.keys(dados).length === 0) {
+                    resultado.innerHTML = '<div class="error">❌ Nenhum dado encontrado para esta cidade.</div>';
+                    return;
+                }
+                
+                // Função auxiliar para extrair o valor correto
+                function getPollutantValue(pollutant) {
+                    if (!pollutant) return 'N/A';
+                    if (typeof pollutant === 'object') {
+                        return pollutant.concentration || pollutant.aqi || 'N/A';
+                    }
+                    return pollutant;
+                }
+                
+                function classificarPM25(valor) { 
+                if (valor <= 12) return "Boa"; 
+                if (valor <= 35.4) return "Moderada"; 
+                if (valor <= 55.4) return "Insalubre para grupos sensíveis";
+                if (valor <= 150.4) return "Insalubre";
+                if (valor <= 250.4) return "Muito Insalubre !!!";
+                return "Perigoso!!!"; 
+                } 
+                
+                function classificarNO2(valor) { 
+                if (valor <= 100) return "Boa"; 
+                if (valor <= 200) return "Moderada"; 
+                if (valor <= 360) return "Insalubre para grupos sensíveis";
+                if (valor <= 650) return "Insalubre";
+                if (valor <= 1250) return "Muito Insalubre !!!";
+                return "Perigoso!!!"; 
+                } 
+
+                function classificarCO(valor) {
+                    if (valor <= 4400) return "Boa";
+                    if (valor <= 9400) return "Moderada";
+                    if (valor <= 12400) return "Insalubre para grupos sensíveis";
+                    if (valor <= 15400) return "Insalubre";
+                    if (valor <= 30400) return "Muito Insalubre !!!";
+                    return "Perigoso!!!";
+                }
+                function classificarSO2(valor) {
+                    if (valor <= 75) return "Boa";
+                    if (valor <= 185) return "Moderada";
+                    if (valor <= 305) return "Insalubre para grupos sensíveis";
+                    if (valor <= 604) return "Insalubre";
+                    if (valor <= 805) return "Muito Insalubre !!!";
+                    return "Perigoso!!!";
+                }
+                function classificarPM10(valor) {
+                    if (valor <= 54) return "Boa";
+                    if (valor <= 154) return "Moderada";
+                    if (valor <= 254) return "Insalubre para grupos sensíveis";
+                    if (valor <= 354) return "Insalubre";
+                    if (valor <= 424) return "Muito Insalubre !!!";
+                    return "PERIGOSO!!!";
+                }
+                function classificarAQI(valor) {
+                    if (valor <= 50) return "Boa";
+                    if (valor <= 100) return "Moderada";
+                    if (valor <= 150) return "Insalubre para grupos sensíveis";
+                    if (valor <= 200) return "Insalubre";
+                    if (valor <= 300) return "Muito Insalubre !!!";
+                    return "PERIGOSO!!!";
+                }    
+                
+                resultado.innerHTML = `
+                    <div class="success">
+                        <h3> Qualidade do ar em <strong>${cidade}</strong></h3>
+                    </div>
+                    <div class="indicadores-grid">
+                        <div class="indicador">
+                            <strong>📊 Índice Geral (AQI):</strong><br>
+                            ${dados.overall_aqi || 'N/A'}
+                        </div>
+                        <div class="indicador">
+                            <strong>PM2.5:</strong><br>
+                            ${getPollutantValue(dados['PM2.5'])} μg/m³
+                        </div>
+                        <div class="indicador">
+                            <strong>PM10:</strong><br>
+                            ${getPollutantValue(dados.PM10)} μg/m³
+                        </div>
+                        <div class="indicador">
+                            <strong>NO2:</strong><br>
+                            ${getPollutantValue(dados.NO2)} μg/m³
+                        </div>
+                        <div class="indicador">
+                            <strong>CO:</strong><br>
+                            ${getPollutantValue(dados.CO)} μg/m³
+                        </div>
+                        <div class="indicador">
+                            <strong>SO2:</strong><br>
+                            ${getPollutantValue(dados.SO2)} μg/m³
+                        </div>
+                    </div>
+                    <div class="indicadores-grid">
+                        <div class="indicador">
+                            <strong>Classificação PM2.5:</strong><br>
+                            ${classificarPM25(getPollutantValue(dados['PM2.5']))}
+                        </div>
+                        <div class="indicador">
+                            <strong>Classificação PM10:</strong><br>
+                            ${classificarPM10(getPollutantValue(dados.PM10))}
+                        </div>
+                        <div class="indicador">
+                            <strong>Classificação NO2:</strong><br>
+                            ${classificarNO2(getPollutantValue(dados.NO2))}
+                        </div>
+                        <div class="indicador">
+                            <strong>Classificação CO:</strong><br>
+                            ${classificarCO(getPollutantValue(dados.CO))}
+                        </div>
+                        <div class="indicador">
+                            <strong>Classificação SO2:</strong><br>
+                            ${classificarSO2(getPollutantValue(dados.SO2))}
+                        </div>
+                        <div class="indicador">
+                            <strong>Classificação AQI:</strong><br>
+                            ${classificarAQI(dados.overall_aqi || 0)}
+                        </div>
+                        <br>
+                </div>
+                        <div>
+                            <p>A classificação dos dados foi realizada de acordo com índices da CETESB/IEMA para AQI e OMS para poluentes específicos.</p>
+                        </div>
+                        <div>
+                            <p>Para mais informações, consulte a <a href="https://www.cetesb.sp.gov.br/qualidade-do-ar/" target="_blank">CETESB</a> e a <a href="https://www.iema.sp.gov.br/" target="_blank">IEMA</a>.</p>
+                        </div>
+                        <div>
+                            <p>Dados atualizados em: ${new Date(dados.updated_at).toLocaleString()}</p>
+                        </div>
+                        <div>
+                            <p>Fonte: <a href="https://api-ninjas.com/api/airquality" target="_blank">API Ninjas</a></p>
+                        </div>
+                        
+                `;
+            } else if (resposta.status === 404) {
+                resultado.innerHTML = '<div class="error">❌ Cidade não encontrada.</div>';
+            } else {
+                resultado.innerHTML = `<div class="error">❌ Erro na API (${resposta.status}).</div>`;
+            }
+            
+        } catch (erro) {
+            resultado.innerHTML = '<div class="error">❌ Erro ao acessar a API.</div>';
+            console.error('Erro:', erro);
+        }
+    }
+    
+    document.getElementById("cidadeIn").addEventListener("keypress", function(event) {
+        if (event.key === "Enter") {
+            consultarAr();
+        }
+    });
+    
+    window.addEventListener('load', consultarAr);
+</script>
 </body>
 </html>
